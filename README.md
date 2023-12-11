@@ -1,2 +1,7 @@
-# tetris
-programming technologies course work
+# Tetris
+Classic tetris game
+### Install requirements
+```
+pip install -r requirements.txt 
+```
+
