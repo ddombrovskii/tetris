@@ -1,5 +1,7 @@
 import pygame
 
+# just testing some shitpost
+
 BACKGROUND_COLOR = (234, 212, 252)
 
 screen = pygame.display.set_mode((300, 300))
