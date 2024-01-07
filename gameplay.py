@@ -157,7 +157,7 @@ def run_tetris():
     next_fig = get_new_fig()
 
     while True:
-        if falling_fig == None:
+        if falling_fig is None:
             # если нет падающих фигур, генерируем новую
             falling_fig = next_fig
             next_fig = get_new_fig()

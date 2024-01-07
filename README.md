@@ -5,3 +5,7 @@ Classic tetris game
 pip install -r requirements.txt 
 ```
 
+### Run application
+```
+python3 main.py
+```
