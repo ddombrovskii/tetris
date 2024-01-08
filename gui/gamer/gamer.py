@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+import sqlite3
 
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Toplevel
 from gui.settings.settings import Settings
@@ -15,8 +16,10 @@ class Gamer(Toplevel):
 
         return ASSETS_PATH / Path(path)
 
-    def __init__(self, parent):
+    def __init__(self, parent, login):
         super().__init__(parent)
+        self.login = login
+
         self.geometry("391x402")
         self.configure(bg="#D9D9D9")
         self.canvas = Canvas(self, bg="#D9D9D9", height=402, width=391, bd=0, highlightthickness=0, relief="ridge")
@@ -49,16 +52,23 @@ class Gamer(Toplevel):
 
         self.button_image_6 = PhotoImage(file=self.relative_to_assets("button_6.png"))
         self.button_6 = Button(self, image=self.button_image_6, borderwidth=0, highlightthickness=0,
-                          command=self.guest_open, relief="flat")
+                          command=self.game_open, relief="flat")
         self.button_6.place(x=130.0, y=147.0, width=130.0, height=25.0)
 
         self.image_image_1 = PhotoImage(file=self.relative_to_assets("image_1.png"))
         self.image_1 = self.canvas.create_image(194.0, 69.0, image=self.image_image_1)
         self.resizable(False, False)
 
-    @staticmethod
-    def guest_open():
-        gameplay.main()
+    def game_open(self):
+        points = gameplay.main()
+        print(self.login, ': ', points, sep='')
+        db = sqlite3.connect('server.db')
+        sql = db.cursor()
+        sql_update_query = """Update users set raiting = ? where login = ?"""
+        data = (points, self.login)
+        sql.execute(sql_update_query, data)
+        db.commit()
+        sql.close()
 
     def settings_open(self):
         self.withdraw()
@@ -73,7 +83,6 @@ class Gamer(Toplevel):
     @staticmethod
     def exit():
         sys.exit(0)
-
 
 
 if __name__ == '__main__':

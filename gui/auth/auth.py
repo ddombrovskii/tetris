@@ -33,7 +33,7 @@ class Auth(Tk):
 
         self.entry_image_1 = PhotoImage(file=self.relative_to_assets("entry_1.png"))
         self.entry_bg_1 = self.canvas.create_image(195.0, 301.0, image=self.entry_image_1)
-        self.password_entry = Entry(self, bd=0, bg="#D9D9D9", fg="#000716", highlightthickness=0)
+        self.password_entry = Entry(self, bd=0, bg="#D9D9D9", fg="#000716", highlightthickness=0, show='*')
         self.password_entry.place(x=73.0, y=291.0, width=244.0, height=18.0)
 
         self.canvas.create_text(73.0, 273.0, anchor="nw", text="Пароль", fill="#FFFFFF", font=("Inter Bold", 14 * -1))
@@ -117,9 +117,8 @@ class Auth(Tk):
             messagebox.showerror(title='Ошибка', message='Такого логина не существует! Зарегистрируйтесь.')
             return
 
-
         self.withdraw()
-        gamer = Gamer(self)
+        gamer = Gamer(self, user_login)
         gamer.grab_set()
 
 

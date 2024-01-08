@@ -137,10 +137,13 @@ def main():
     big_font = pg.font.SysFont('verdana', 45)
     pg.display.set_caption('Tetris')
 
-    while True:
-        run_tetris()
-        pause_screen()
-        show_text('Игра закончена')
+    points = run_tetris()
+    stop_game()
+    # print(points)
+    # pause_screen()
+    # show_text('Игра закончена')
+
+    return points
 
 
 def run_tetris():
@@ -164,7 +167,7 @@ def run_tetris():
             last_fall = time.time()
 
             if not check_pos(cup, falling_fig):
-                return
+                return points
         quit_game()
 
         for event in pg.event.get():
@@ -254,8 +257,9 @@ def txt_objects(text, font, color):
 
 
 def stop_game():
+    # pg.display.quit()
     pg.quit()
-    sys.exit()
+    # sys.exit()
 
 
 def check_keys():

@@ -48,7 +48,7 @@ class Raiting(Toplevel):
         for value in sql.execute("SELECT login, password, raiting FROM users"):
             try:
                 login, _, raiting = list(value)
-                db_list.append(login + ' ------------ ' + str(raiting))
+                db_list.append(login + '_________________________________________________________' + str(raiting))
             except ValueError:
                 print('empty string in db')
 

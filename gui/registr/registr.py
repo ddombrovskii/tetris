@@ -106,15 +106,29 @@ class Registr(Toplevel):
 
     @staticmethod
     def check_login_pass(login, password, repeat_password):
-        result = False
+        result = True
+        message_string = ""
         if password != repeat_password:
-            messagebox.showerror(title='Ошибка', message='Пароли не совпадают!')
+            message_string += 'Пароли не совпадают!\n'
             result = False
-        elif login == "admin" and password == "admin":
-            messagebox.showerror(title='Ошибка', message='Недопустимое имя пользователя!')
+        if login == "admin" and password == "admin":
+            message_string += 'Недопустимое имя пользователя!\n'
             result = False
-        else:
-            result = True
+        if len(login) < 4:
+            message_string += 'Длина логина должна быть не менее 4 символов.\n'
+            result = False
+        if len(login) > 10:
+            message_string += 'Длина логина должна быть не более 10 символов\n'
+            result = False
+        if len(password) < 8:
+            message_string += 'Длина пароля должна быть не менее 8 символов\n'
+            result = False
+        if len(password) > 20:
+            message_string += 'Длина пароля должна быть не более 20 символов\n'
+            result = False
+
+        if not result:
+            messagebox.showerror(title='Ошибка', message=message_string)
 
         return result
 
