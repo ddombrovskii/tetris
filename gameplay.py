@@ -19,7 +19,8 @@ LIGHTCOLORS = ((30, 30, 255), (50, 255, 50),
                (255, 30, 30), (255, 255, 30))  # light-blue, light-green, light-red, light-yellow
 
 WHITE, GRAY, BLACK = (255, 255, 255), (185, 185, 185), (0, 0, 0)
-BRD_COLOR, BG_COLOR, TXT_COLOR, TITLE_COLOR, INFO_COLOR, = WHITE, GRAY, WHITE, COLORS[3], COLORS[0]
+BRD_COLOR, BG_COLOR, TXT_COLOR, TITLE_COLOR, INFO_COLOR = WHITE, GRAY, WHITE, COLORS[3], COLORS[0]
+GRD_COLOR = (160, 160, 160)
 
 FIG_W, FIG_H = 5, 5
 EMPTY = 'o'
@@ -396,6 +397,13 @@ def game_cup(cup):
 
     # фон игрового поля
     pg.draw.rect(display_surf, BG_COLOR, (SIDE_MARGIN, TOP_MARGIN, BLOCK * CUP_W, BLOCK * CUP_H))
+    for i in range(CUP_H):
+        pg.draw.line(display_surf, GRD_COLOR, (SIDE_MARGIN, TOP_MARGIN + i * BLOCK),
+                     (SIDE_MARGIN + (CUP_W * BLOCK), TOP_MARGIN + i * BLOCK), 1)
+        for j in range(CUP_W):
+            pg.draw.line(display_surf, GRD_COLOR, (SIDE_MARGIN + j * BLOCK, TOP_MARGIN),
+                         (SIDE_MARGIN + j * BLOCK, TOP_MARGIN + (CUP_H * BLOCK)))
+
     for x in range(CUP_W):
         for y in range(CUP_H):
             draw_block(x, y, cup[x][y])

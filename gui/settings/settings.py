@@ -37,7 +37,7 @@ class Settings(Toplevel):
         self.button_3.place(x=250.3937225341797, y=268.0, width=87.60626983642578, height=20.0)
 
         self.canvas.create_text(49.0, 269.0, anchor="nw", text="Выбор фона", fill="#FFFFFF", font=("Inter", 15 * -1))
-
+        '''
         combobox_list = ["По времени", "По очкам", "Череда побед"]
         self.raiting_choose_combobox = ttk.Combobox(self, values=combobox_list)
         self.raiting_choose_combobox.place(x=48.0, y=234.0, width=290.0, height=18.0)
@@ -46,7 +46,7 @@ class Settings(Toplevel):
                                 font=("Shrikhand Regular", 15 * -1))
 
         self.canvas.create_text(48.0, 210.0, anchor="nw", text="Выбор способа подсчёта результата", fill="#FFFFFF",
-                                font=("Inter", 15 * -1))
+                                font=("Inter", 15 * -1))'''
 
         self.checkbutton_1 = Checkbutton(self, borderwidth=0, highlightthickness=0, relief="flat")
         self.checkbutton_1.place(x=319.0, y=181.0, width=19.0, height=19.0)
