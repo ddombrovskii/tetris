@@ -30,8 +30,13 @@ class Raiting(Toplevel):
         self.canvas.create_text(24.0, 31.0, anchor="nw", text="Рейтинг по очкам ", fill="#FFFFFF",
                                 font=("Inter Black", 38 * -1))
 
-        db_list = self.get_db_list()
-        db_list_var = Variable(value=db_list)
+        db_dict = self.get_db_list()
+        db_list_sorted = sorted(db_dict.items(), key=lambda x: x[1], reverse=True)
+        db_dict_sorted = dict(db_list_sorted)
+        rating_list = list()
+        for key, value in db_dict_sorted.items():
+            rating_list.append(key + '\t_________________________________________________________\t' + str(value))
+        db_list_var = Variable(value=rating_list)
         self.raiting_listbox = Listbox(self, listvariable=db_list_var)
         self.raiting_listbox.place(x=25.0, y=114.0, width=340.0, height=200.0)
         self.resizable(False, False)
@@ -44,11 +49,12 @@ class Raiting(Toplevel):
     def get_db_list():
         db = sqlite3.connect('server.db')
         sql = db.cursor()
-        db_list = []
-        for value in sql.execute("SELECT login, password, raiting FROM users"):
+        db_list = {}
+        for value in sql.execute("SELECT login, password, raiting, grid, next_fig, background FROM users"):
             try:
-                login, _, raiting = list(value)
-                db_list.append(login + '_________________________________________________________' + str(raiting))
+                login, _, raiting, _, _, _ = list(value)
+                db_list[login] = raiting
+                # db_list.append(login + '_________________________________________________________' + str(raiting))
             except ValueError:
                 print('empty string in db')
 

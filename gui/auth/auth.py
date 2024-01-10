@@ -94,9 +94,9 @@ class Auth(Tk):
         db_login = ""
         db_password = ""
         try:
-            for value in sql.execute("SELECT login, password, raiting FROM users"):
+            for value in sql.execute("SELECT login, password, raiting, grid, next_fig, background FROM users"):
                 try:
-                    db_login, db_password, _ = list(value)
+                    db_login, db_password, _, _, _, _ = list(value)
                     if db_login == user_login:
                         check = True
                         print(check)

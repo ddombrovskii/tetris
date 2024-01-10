@@ -79,7 +79,10 @@ class Registr(Toplevel):
         sql.execute("""CREATE TABLE IF NOT EXISTS users(
             login TEXT,
             password TEXT,
-            raiting INTEGER
+            raiting INTEGER,
+            grid INTEGER,
+            next_fig INTEGER,
+            background TEXT
         )""")
 
         user_log = self.login_entry.get()
@@ -89,14 +92,14 @@ class Registr(Toplevel):
             return
 
         check = False
-        for value in sql.execute("SELECT login, password, raiting FROM users"):
-            login_from_sql, _, _ = list(value)
-            if user_log == login_from_sql:
+        for value in sql.execute("SELECT login, password, raiting, grid, next_fig, background FROM users"):
+            login_from_sql = list(value)
+            if user_log == login_from_sql[0]:
                 check = True
                 break
 
         if not check:
-            sql.execute(f"INSERT INTO users VALUES (?, ?, 0)", (user_log, user_pass))
+            sql.execute(f"INSERT INTO users VALUES (?, ?, 0, 1, 1, 'None')", (user_log, user_pass))
             db.commit()
             messagebox.showinfo(title='Успех', message='Регистрация прошла успешно')
             self.parent.deiconify()

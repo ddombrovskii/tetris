@@ -5,6 +5,7 @@ import sqlite3
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Toplevel
 from gui.settings.settings import Settings
 from gui.raiting.raiting import Raiting
+from gui.about_devs.about_devs import AboutDevs
 import gameplay
 
 
@@ -27,32 +28,32 @@ class Gamer(Toplevel):
         self.canvas.place(x=0, y=0)
         self.button_image_1 = PhotoImage(file=self.relative_to_assets("button_1.png"))
         self.button_1 = Button(self, image=self.button_image_1, borderwidth=0, highlightthickness=0,
-                          command=self.exit, relief="flat")
+                               command=self.exit, relief="flat")
         self.button_1.place(x=130.0, y=312.0, width=130.0, height=25.0)
 
         self.button_image_2 = PhotoImage(file=self.relative_to_assets("button_2.png"))
         self.button_2 = Button(self, image=self.button_image_2, borderwidth=0, highlightthickness=0,
-                          command=lambda: print("button_2 clicked"), relief="flat")
+                               command=self.about_dev_open, relief="flat")
         self.button_2.place(x=130.0, y=279.0, width=130.0, height=25.0)
 
         self.button_image_3 = PhotoImage(file=self.relative_to_assets("button_3.png"))
         self.button_3 = Button(self, image=self.button_image_3, borderwidth=0, highlightthickness=0,
-                          command=lambda: print("button_3 clicked"), relief="flat")
+                               command=lambda: print("button_3 clicked"), relief="flat")
         self.button_3.place(x=130.0, y=246.0, width=130.0, height=25.0)
 
         self.button_image_4 = PhotoImage(file=self.relative_to_assets("button_4.png"))
         self.button_4 = Button(self, image=self.button_image_4, borderwidth=0, highlightthickness=0,
-                          command=self.raiting_open, relief="flat")
+                               command=self.raiting_open, relief="flat")
         self.button_4.place(x=130.0, y=213.0, width=130.0, height=25.0)
 
         self.button_image_5 = PhotoImage(file=self.relative_to_assets("button_5.png"))
         self.button_5 = Button(self, image=self.button_image_5, borderwidth=0, highlightthickness=0,
-                          command=self.settings_open, relief="flat")
+                               command=self.settings_open, relief="flat")
         self.button_5.place(x=130.0, y=180.0, width=130.0, height=25.0)
 
         self.button_image_6 = PhotoImage(file=self.relative_to_assets("button_6.png"))
         self.button_6 = Button(self, image=self.button_image_6, borderwidth=0, highlightthickness=0,
-                          command=self.game_open, relief="flat")
+                               command=self.game_open, relief="flat")
         self.button_6.place(x=130.0, y=147.0, width=130.0, height=25.0)
 
         self.image_image_1 = PhotoImage(file=self.relative_to_assets("image_1.png"))
@@ -64,7 +65,7 @@ class Gamer(Toplevel):
         print(self.login, ': ', points, sep='')
         db = sqlite3.connect('server.db')
         sql = db.cursor()
-        sql_update_query = """Update users set raiting = ? where login = ?"""
+        sql_update_query = """UPDATE users SET raiting = ? WHERE login = ?"""
         data = (points, self.login)
         sql.execute(sql_update_query, data)
         db.commit()
@@ -72,13 +73,18 @@ class Gamer(Toplevel):
 
     def settings_open(self):
         self.withdraw()
-        settings = Settings(self)
+        settings = Settings(self, self.login)
         settings.grab_set()
 
     def raiting_open(self):
         self.withdraw()
         raiting = Raiting(self)
         raiting.grab_set()
+
+    def about_dev_open(self):
+        self.withdraw()
+        about = AboutDevs(self)
+        about.grab_set()
 
     @staticmethod
     def exit():
