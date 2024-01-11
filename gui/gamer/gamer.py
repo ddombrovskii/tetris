@@ -7,8 +7,8 @@ from gui.settings.settings import Settings
 from gui.raiting.raiting import Raiting
 from gui.about_devs.about_devs import AboutDevs
 from gui.choose_lvl.choose_lvl import ChooseLvl
-import gameplay
-
+import webbrowser
+import os
 
 class Gamer(Toplevel):
     @staticmethod
@@ -21,6 +21,7 @@ class Gamer(Toplevel):
     def __init__(self, parent, login):
         super().__init__(parent)
         self.login = login
+        self.about_url = os.path.realpath('./about/index.html')
 
         self.geometry("391x402")
         self.configure(bg="#D9D9D9")
@@ -39,7 +40,7 @@ class Gamer(Toplevel):
 
         self.button_image_3 = PhotoImage(file=self.relative_to_assets("button_3.png"))
         self.button_3 = Button(self, image=self.button_image_3, borderwidth=0, highlightthickness=0,
-                               command=lambda: print("button_3 clicked"), relief="flat")
+                               command=lambda url=self.about_url: self.open_url(url), relief="flat")
         self.button_3.place(x=130.0, y=246.0, width=130.0, height=25.0)
 
         self.button_image_4 = PhotoImage(file=self.relative_to_assets("button_4.png"))
@@ -62,25 +63,9 @@ class Gamer(Toplevel):
         self.resizable(False, False)
 
     def game_open(self):
-        '''points = gameplay.main(self.login)
-        print(self.login, ': ', points, sep='')
-        db = sqlite3.connect('server.db')
-        sql = db.cursor()
-        sql_select_query = """SELECT * FROM users WHERE login = ?"""
-        data = (self.login,)
-        sql.execute(sql_select_query, data)
-        rating = sql.fetchall()[0][2]
-        if rating < points:
-            sql_update_query = """UPDATE users SET raiting = ? WHERE login = ?"""
-            data = (points, self.login)
-            sql.execute(sql_update_query, data)
-            db.commit()
-        sql.close()'''
         self.withdraw()
         settings = ChooseLvl(self, self.login)
         settings.grab_set()
-
-
 
     def settings_open(self):
         self.withdraw()
@@ -96,6 +81,9 @@ class Gamer(Toplevel):
         self.withdraw()
         about = AboutDevs(self)
         about.grab_set()
+
+    def open_url(self, url):
+        os.system(f"start {url}")
 
     @staticmethod
     def exit():

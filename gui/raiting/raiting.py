@@ -35,7 +35,7 @@ class Raiting(Toplevel):
         db_dict_sorted = dict(db_list_sorted)
         rating_list = list()
         for key, value in db_dict_sorted.items():
-            rating_list.append(key + '\t_________________________________________________________\t' + str(value))
+            rating_list.append(key + '\t__________________________________________________\t' + str(value))
         db_list_var = Variable(value=rating_list)
         self.raiting_listbox = Listbox(self, listvariable=db_list_var)
         self.raiting_listbox.place(x=25.0, y=114.0, width=340.0, height=200.0)
