@@ -114,7 +114,7 @@ class Registr(Toplevel):
         if password != repeat_password:
             message_string += 'Пароли не совпадают!\n'
             result = False
-        if login == "admin" and password == "admin":
+        if login == "admin":
             message_string += 'Недопустимое имя пользователя!\n'
             result = False
         if len(login) < 4:

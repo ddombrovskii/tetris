@@ -108,6 +108,7 @@ class Auth(Tk):
 
         except sqlite3.OperationalError:
             print("empty table")
+            messagebox.showerror(title='Ошибка', message='Такого логина не существует! Зарегистрируйтесь.')
             return
 
         if check:

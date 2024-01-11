@@ -6,6 +6,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Toplevel
 from gui.settings.settings import Settings
 from gui.raiting.raiting import Raiting
 from gui.about_devs.about_devs import AboutDevs
+from gui.choose_lvl.choose_lvl import ChooseLvl
 import gameplay
 
 
@@ -61,7 +62,7 @@ class Gamer(Toplevel):
         self.resizable(False, False)
 
     def game_open(self):
-        points = gameplay.main(self.login)
+        '''points = gameplay.main(self.login)
         print(self.login, ': ', points, sep='')
         db = sqlite3.connect('server.db')
         sql = db.cursor()
@@ -74,7 +75,12 @@ class Gamer(Toplevel):
             data = (points, self.login)
             sql.execute(sql_update_query, data)
             db.commit()
-        sql.close()
+        sql.close()'''
+        self.withdraw()
+        settings = ChooseLvl(self, self.login)
+        settings.grab_set()
+
+
 
     def settings_open(self):
         self.withdraw()

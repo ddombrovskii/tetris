@@ -6,15 +6,6 @@ import sqlite3
 import pygame as pg
 from pygame.locals import *
 
-FPS = 25
-WINDOW_W, WINDOW_H = 600, 500
-BLOCK, CUP_H, CUP_W = 20, 20, 10
-
-SIDE_FREQ, DOWN_FREQ = 0.15, 0.1
-
-SIDE_MARGIN = int((WINDOW_H - CUP_W * BLOCK) / 2)
-TOP_MARGIN = WINDOW_H - (CUP_H * BLOCK) - 5
-
 COLORS = ((0, 0, 225), (0, 225, 0), (225, 0, 0), (225, 225, 0))  # blue, green, red, yellow
 LIGHTCOLORS = ((30, 30, 255), (50, 255, 50),
                (255, 30, 30), (255, 255, 30))  # light-blue, light-green, light-red, light-yellow
@@ -129,8 +120,19 @@ def pause_screen():
     display_surf.blit(pause, (0, 0))
 
 
-def main(login):
+def main(login, width, height, speed):
     global display_surf, fps_clock, basic_font, big_font
+    global FPS, WINDOW_W, WINDOW_H, BLOCK, CUP_H, CUP_W, SIDE_FREQ, DOWN_FREQ, SIDE_MARGIN, TOP_MARGIN
+
+    FPS = 25
+    WINDOW_W, WINDOW_H = 600, 500
+    BLOCK = 20
+    CUP_H, CUP_W = height, width
+
+    SIDE_FREQ, DOWN_FREQ = 0.15, 0.1
+
+    SIDE_MARGIN = int((WINDOW_H - CUP_W * BLOCK) / 2)
+    TOP_MARGIN = WINDOW_H - (CUP_H * BLOCK) - 5
 
     pg.init()
     fps_clock = pg.time.Clock()
@@ -139,7 +141,7 @@ def main(login):
     big_font = pg.font.SysFont('verdana', 45)
     pg.display.set_caption('Tetris')
 
-    points = run_tetris(login)
+    points = run_tetris(login, speed)
     stop_game()
     # print(points)
     # pause_screen()
@@ -148,7 +150,7 @@ def main(login):
     return points
 
 
-def run_tetris(login):
+def run_tetris(login, speed):
     cup = empty_cup()
     last_move_down = time.time()
     last_side_move = time.time()
@@ -157,7 +159,7 @@ def run_tetris(login):
     going_left = False
     going_right = False
     points = 0
-    level, fall_speed = calc_speed(points)
+    fall_speed = 0.27 - (speed * 0.02)
     falling_fig = get_new_fig()
     next_fig = get_new_fig()
 
@@ -235,7 +237,7 @@ def run_tetris(login):
             if not check_pos(cup, falling_fig, adjY=1):
                 add_to_cup(cup, falling_fig)
                 points += clear_completed(cup)
-                level, fall_speed = calc_speed(points)
+                # level, fall_speed = calc_speed(points)
                 falling_fig = None
             else:
                 falling_fig['y'] += 1
@@ -244,7 +246,7 @@ def run_tetris(login):
         display_surf.fill(BG_COLOR)
         draw_title()
         game_cup(cup, login)
-        draw_info(points, level)
+        draw_info(points)
         if get_next_fig_state(login):
             draw_next_fig(next_fig)
 
@@ -299,10 +301,12 @@ def quit_game():
         pg.event.post(event)
 
 
+'''
 def calc_speed(points):
     level = int(points / 10) + 1
     fall_speed = 0.27 - (level * 0.02)
     return level, fall_speed
+'''
 
 
 def get_new_fig():
@@ -420,16 +424,16 @@ def draw_title():
     display_surf.blit(title_surf, title_rect)
 
 
-def draw_info(points, level):
+def draw_info(points):
     points_surf = basic_font.render(f'Баллы: {points}', True, TXT_COLOR)
     points_rect = points_surf.get_rect()
     points_rect.topleft = (WINDOW_W - 550, 180)
     display_surf.blit(points_surf, points_rect)
 
-    level_surf = basic_font.render(f'Уровень: {level}', True, TXT_COLOR)
+    '''    level_surf = basic_font.render(f'Уровень: {level}', True, TXT_COLOR)
     level_rect = level_surf.get_rect()
     level_rect.topleft = (WINDOW_W - 550, 250)
-    display_surf.blit(level_surf, level_rect)
+    display_surf.blit(level_surf, level_rect)'''
 
     pause_surf = basic_font.render("Пауза: пробел", True, INFO_COLOR)
     pause_rect = pause_surf.get_rect()
