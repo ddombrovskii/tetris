@@ -61,15 +61,19 @@ class Gamer(Toplevel):
         self.resizable(False, False)
 
     def game_open(self):
-        # TODO: не обновлять если рейтинг после игры меньше чем в БД
         points = gameplay.main(self.login)
         print(self.login, ': ', points, sep='')
         db = sqlite3.connect('server.db')
         sql = db.cursor()
-        sql_update_query = """UPDATE users SET raiting = ? WHERE login = ?"""
-        data = (points, self.login)
-        sql.execute(sql_update_query, data)
-        db.commit()
+        sql_select_query = """SELECT * FROM users WHERE login = ?"""
+        data = (self.login,)
+        sql.execute(sql_select_query, data)
+        rating = sql.fetchall()[0][2]
+        if rating < points:
+            sql_update_query = """UPDATE users SET raiting = ? WHERE login = ?"""
+            data = (points, self.login)
+            sql.execute(sql_update_query, data)
+            db.commit()
         sql.close()
 
     def settings_open(self):
