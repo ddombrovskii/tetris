@@ -1,6 +1,7 @@
 import random
 import sys
 import time
+import sqlite3
 
 import pygame as pg
 from pygame.locals import *
@@ -128,7 +129,7 @@ def pause_screen():
     display_surf.blit(pause, (0, 0))
 
 
-def main():
+def main(login):
     global display_surf, fps_clock, basic_font, big_font
 
     pg.init()
@@ -138,7 +139,7 @@ def main():
     big_font = pg.font.SysFont('verdana', 45)
     pg.display.set_caption('Tetris')
 
-    points = run_tetris()
+    points = run_tetris(login)
     stop_game()
     # print(points)
     # pause_screen()
@@ -147,7 +148,7 @@ def main():
     return points
 
 
-def run_tetris():
+def run_tetris(login):
     cup = empty_cup()
     last_move_down = time.time()
     last_side_move = time.time()
@@ -242,9 +243,10 @@ def run_tetris():
 
         display_surf.fill(BG_COLOR)
         draw_title()
-        game_cup(cup)
+        game_cup(cup, login)
         draw_info(points, level)
-        draw_next_fig(next_fig)
+        if get_next_fig_state(login):
+            draw_next_fig(next_fig)
 
         if falling_fig is not None:
             draw_fig(falling_fig)
@@ -391,18 +393,20 @@ def draw_block(block_x, block_y, color, pixelx=None, pixely=None):
     # pg.draw.circle(display_surf, COLORS[color], (pixelx + BLOCK / 2, pixely + BLOCK / 2), 5)
 
 
-def game_cup(cup):
+def game_cup(cup, login):
     pg.draw.rect(display_surf, BRD_COLOR, (SIDE_MARGIN - 4, TOP_MARGIN - 4, (CUP_W * BLOCK) + 8, (CUP_H * BLOCK) + 8),
                  5)
 
     # фон игрового поля
     pg.draw.rect(display_surf, BG_COLOR, (SIDE_MARGIN, TOP_MARGIN, BLOCK * CUP_W, BLOCK * CUP_H))
-    for i in range(CUP_H):
-        pg.draw.line(display_surf, GRD_COLOR, (SIDE_MARGIN, TOP_MARGIN + i * BLOCK),
-                     (SIDE_MARGIN + (CUP_W * BLOCK), TOP_MARGIN + i * BLOCK), 1)
-        for j in range(CUP_W):
-            pg.draw.line(display_surf, GRD_COLOR, (SIDE_MARGIN + j * BLOCK, TOP_MARGIN),
-                         (SIDE_MARGIN + j * BLOCK, TOP_MARGIN + (CUP_H * BLOCK)))
+
+    if get_grid_state(login):
+        for i in range(CUP_H):
+            pg.draw.line(display_surf, GRD_COLOR, (SIDE_MARGIN, TOP_MARGIN + i * BLOCK),
+                         (SIDE_MARGIN + (CUP_W * BLOCK), TOP_MARGIN + i * BLOCK), 1)
+            for j in range(CUP_W):
+                pg.draw.line(display_surf, GRD_COLOR, (SIDE_MARGIN + j * BLOCK, TOP_MARGIN),
+                             (SIDE_MARGIN + j * BLOCK, TOP_MARGIN + (CUP_H * BLOCK)))
 
     for x in range(CUP_W):
         for y in range(CUP_H):
@@ -429,12 +433,12 @@ def draw_info(points, level):
 
     pause_surf = basic_font.render("Пауза: пробел", True, INFO_COLOR)
     pause_rect = pause_surf.get_rect()
-    pause_rect.topleft = (WINDOW_W - 550, 420)
+    pause_rect.topleft = (WINDOW_W - 140, 420)
     display_surf.blit(pause_surf, pause_rect)
 
     escb_surf = basic_font.render("Выход: Esc", True, INFO_COLOR)
     escb_rect = escb_surf.get_rect()
-    escb_rect.topleft = (WINDOW_W - 550, 450)
+    escb_rect.topleft = (WINDOW_W - 140, 450)
     display_surf.blit(escb_surf, escb_rect)
 
 
@@ -458,5 +462,41 @@ def draw_next_fig(fig):
     draw_fig(fig, pixelx=WINDOW_W - 150, pixely=230)
 
 
+def get_grid_state(login):
+    if login == 'guest':
+        return True
+
+    db = sqlite3.connect('server.db')
+    sql = db.cursor()
+    sql_update_query = """SELECT * FROM users WHERE login = ?"""
+    sql.execute(sql_update_query, (login,))
+    records = sql.fetchall()[0]
+    _, _, _, grid, _, _ = records
+    sql.close()
+
+    if grid == 1:
+        return True
+    else:
+        return False
+
+
+def get_next_fig_state(login):
+    if login == 'guest':
+        return True
+
+    db = sqlite3.connect('server.db')
+    sql = db.cursor()
+    sql_update_query = """SELECT * FROM users WHERE login = ?"""
+    sql.execute(sql_update_query, (login,))
+    records = sql.fetchall()[0]
+    _, _, _, _, next_fig, _ = records
+    sql.close()
+
+    if next_fig == 1:
+        return True
+    else:
+        return False
+
+
 if __name__ == '__main__':
-    main()
+    main('guest')

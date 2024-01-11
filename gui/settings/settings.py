@@ -1,4 +1,3 @@
-import tkinter
 from pathlib import Path
 
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, Toplevel, Checkbutton, ttk, IntVar
@@ -17,8 +16,8 @@ class Settings(Toplevel):
         super().__init__(parent)
 
         self.login = login
-        self.grid_checkbutton = IntVar()
-        self.next_fig_checkbutton = IntVar()
+        self.grid = IntVar()
+        self.next_fig = IntVar()
 
         self.parent = parent
         self.protocol("WM_DELETE_WINDOW", self.back_delete)
@@ -30,7 +29,7 @@ class Settings(Toplevel):
         self.canvas.place(x=0, y=0)
         self.button_image_1 = PhotoImage(file=self.relative_to_assets("button_1.png"))
         self.button_1 = Button(self, image=self.button_image_1, borderwidth=0, highlightthickness=0,
-                               command=lambda: print("button_1 clicked"), relief="flat")
+                               command=self.accept_button, relief="flat")
         self.button_1.place(x=198.0, y=336.0, width=140.46551513671875, height=24.999969482421875)
 
         self.button_image_2 = PhotoImage(file=self.relative_to_assets("button_2.png"))
@@ -43,7 +42,7 @@ class Settings(Toplevel):
                                command=lambda: print("button_3 clicked"), relief="flat")
         self.button_3.place(x=250.3937225341797, y=268.0, width=87.60626983642578, height=20.0)
 
-        self.canvas.create_text(49.0, 269.0, anchor="nw", text="Выбор фона", fill="#FFFFFF", font=("Inter", 15 * -1))
+        self.canvas.create_text(49.0, 269.0, anchor="nw", text="Выбор фона", fill="#000000", font=("Inter", 15 * -1))
         '''
         combobox_list = ["По времени", "По очкам", "Череда побед"]
         self.raiting_choose_combobox = ttk.Combobox(self, values=combobox_list)
@@ -52,52 +51,48 @@ class Settings(Toplevel):
         self.canvas.create_text(52.0, 234.0, anchor="nw", text="По очкам", fill="#000000",
                                 font=("Shrikhand Regular", 15 * -1))
 
-        self.canvas.create_text(48.0, 210.0, anchor="nw", text="Выбор способа подсчёта результата", fill="#FFFFFF",
+        self.canvas.create_text(48.0, 210.0, anchor="nw", text="Выбор способа подсчёта результата", fill="#000000",
                                 font=("Inter", 15 * -1))'''
 
         self.checkbutton_1 = Checkbutton(self, borderwidth=0, highlightthickness=0, relief="flat",
-                                         variable=self.next_fig_checkbutton, command=self.next_fig_changed)
+                                         variable=self.next_fig)
         self.checkbutton_1.place(x=319.0, y=181.0, width=19.0, height=19.0)
 
-        self.canvas.create_text(48.0, 178.0, anchor="nw", text="Показ следующей фигуры", fill="#FFFFFF",
+        self.canvas.create_text(48.0, 178.0, anchor="nw", text="Показ следующей фигуры", fill="#000000",
                                 font=("Inter", 20 * -1))
 
         self.checkbutton_2 = Checkbutton(self, borderwidth=0, highlightthickness=0, relief="flat",
-                                         variable=self.grid_checkbutton, command=self.grid_changed)
+                                         variable=self.grid)
         self.checkbutton_2.place(x=319.0, y=154.0, width=19.0, height=19.0)
 
-        self.canvas.create_text(48.0, 151.0, anchor="nw", text="Показ сетки ", fill="#FFFFFF", font=("Inter", 20 * -1))
+        self.canvas.create_text(48.0, 151.0, anchor="nw", text="Показ сетки ", fill="#000000", font=("Inter", 20 * -1))
 
-        self.canvas.create_text(67.0, 47.0, anchor="nw", text="НАСТРОЙКИ", fill="#FFFFFF",
+        self.canvas.create_text(67.0, 47.0, anchor="nw", text="НАСТРОЙКИ", fill="#000000",
                                 font=("Inter Black", 38 * -1))
         self.resizable(False, False)
+        self.load_data_settings()
 
-    def load_next_fig(self):
+    def load_data_settings(self):
         db = sqlite3.connect('server.db')
         sql = db.cursor()
-        sql_update_query = """UPDATE users SET next_fig = ? WHERE login = ?"""
-        data = (self.next_fig_checkbutton.get(), self.login)
+        sql_update_query = """SELECT * FROM users WHERE login = ?"""
+        sql.execute(sql_update_query, (self.login,))
+        records = sql.fetchall()[0]
+        _, _, _, grid, next_fig, _ = records
+        self.grid.set(grid)
+        self.next_fig.set(next_fig)
+        sql.close()
+
+    def accept_button(self):
+        db = sqlite3.connect('server.db')
+        sql = db.cursor()
+        sql_update_query = """UPDATE users SET grid = ?, next_fig = ? WHERE login = ?"""
+        data = (self.grid.get(), self.next_fig.get(), self.login)
         sql.execute(sql_update_query, data)
         db.commit()
         sql.close()
-
-    def next_fig_changed(self):
-        db = sqlite3.connect('server.db')
-        sql = db.cursor()
-        sql_update_query = """UPDATE users SET next_fig = ? WHERE login = ?"""
-        data = (self.next_fig_checkbutton.get(), self.login)
-        sql.execute(sql_update_query, data)
-        db.commit()
-        sql.close()
-
-    def grid_changed(self):
-        db = sqlite3.connect('server.db')
-        sql = db.cursor()
-        sql_update_query = """UPDATE users SET grid = ? WHERE login = ?"""
-        data = (self.grid_checkbutton.get(), self.login)
-        sql.execute(sql_update_query, data)
-        db.commit()
-        sql.close()
+        self.parent.deiconify()
+        self.destroy()
 
     def back_delete(self):
         self.parent.deiconify()

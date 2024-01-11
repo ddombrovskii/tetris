@@ -61,7 +61,8 @@ class Gamer(Toplevel):
         self.resizable(False, False)
 
     def game_open(self):
-        points = gameplay.main()
+        # TODO: не обновлять если рейтинг после игры меньше чем в БД
+        points = gameplay.main(self.login)
         print(self.login, ': ', points, sep='')
         db = sqlite3.connect('server.db')
         sql = db.cursor()

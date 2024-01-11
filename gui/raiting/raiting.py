@@ -27,7 +27,7 @@ class Raiting(Toplevel):
                                command=self.back_delete, relief="flat")
         self.button_1.place(x=142.0, y=360.0, width=107.0, height=25.0)
 
-        self.canvas.create_text(24.0, 31.0, anchor="nw", text="Рейтинг по очкам ", fill="#FFFFFF",
+        self.canvas.create_text(24.0, 31.0, anchor="nw", text="Рейтинг по очкам ", fill="#000000",
                                 font=("Inter Black", 38 * -1))
 
         db_dict = self.get_db_list()
@@ -50,11 +50,10 @@ class Raiting(Toplevel):
         db = sqlite3.connect('server.db')
         sql = db.cursor()
         db_list = {}
-        for value in sql.execute("SELECT login, password, raiting, grid, next_fig, background FROM users"):
+        for value in sql.execute("SELECT * FROM users"):
             try:
                 login, _, raiting, _, _, _ = list(value)
                 db_list[login] = raiting
-                # db_list.append(login + '_________________________________________________________' + str(raiting))
             except ValueError:
                 print('empty string in db')
 
