@@ -114,6 +114,35 @@ FIGURES = {'S': [['ooooo',
                   'ooooo']]}
 
 
+def rotate_figure(figure) -> list:
+    n = 5
+    m = 5
+    a = [list(x) for x in figure]
+    k = [['o', 'o', 'o', 'o', 'o'],
+         ['o', 'o', 'o', 'o', 'o'],
+         ['o', 'o', 'o', 'o', 'o'],
+         ['o', 'o', 'o', 'o', 'o'],
+         ['o', 'o', 'o', 'o', 'o']]
+
+    for i in range(n):
+        for j in range(m):
+            k[j][n - 1 - i] = a[i][j]
+
+    return k
+
+
+db = sqlite3.connect('server.db')
+sql = db.cursor()
+sql.execute("""SELECT * FROM figures""")
+for var in sql.fetchall():
+    for i in range(len(var[1])):
+        FIGURES[var[0]] = [list(var[1].split())]
+        FIGURES[var[0]].append(rotate_figure(FIGURES[var[0]][0]))
+        FIGURES[var[0]].append(rotate_figure(FIGURES[var[0]][1]))
+        FIGURES[var[0]].append(rotate_figure(FIGURES[var[0]][2]))
+sql.close()
+
+
 def pause_screen():
     pause = pg.Surface((600, 500), pg.SRCALPHA)
     pause.fill((0, 0, 255, 127))
@@ -125,7 +154,7 @@ def main(login, width, height, speed):
     global FPS, WINDOW_W, WINDOW_H, BLOCK, CUP_H, CUP_W, SIDE_FREQ, DOWN_FREQ, SIDE_MARGIN, TOP_MARGIN
 
     FPS = 25
-    WINDOW_W, WINDOW_H = 600, 500
+    WINDOW_W, WINDOW_H = 600, 700
     BLOCK = 20
     CUP_H, CUP_W = height, width
 
@@ -299,14 +328,6 @@ def quit_game():
         if event.key == K_ESCAPE:
             stop_game()
         pg.event.post(event)
-
-
-'''
-def calc_speed(points):
-    level = int(points / 10) + 1
-    fall_speed = 0.27 - (level * 0.02)
-    return level, fall_speed
-'''
 
 
 def get_new_fig():

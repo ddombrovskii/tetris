@@ -76,7 +76,7 @@ class Auth(Tk):
 
     @staticmethod
     def guest_open():
-        gameplay.main('guest')
+        gameplay.main('guest', 10, 20, 3)
 
     def entry_open(self):
         db = sqlite3.connect('server.db')

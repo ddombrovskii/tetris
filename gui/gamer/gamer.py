@@ -7,8 +7,8 @@ from gui.settings.settings import Settings
 from gui.raiting.raiting import Raiting
 from gui.about_devs.about_devs import AboutDevs
 from gui.choose_lvl.choose_lvl import ChooseLvl
-import webbrowser
 import os
+
 
 class Gamer(Toplevel):
     @staticmethod
