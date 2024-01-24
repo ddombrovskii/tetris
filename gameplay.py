@@ -130,17 +130,19 @@ def rotate_figure(figure) -> list:
 
     return k
 
-
-db = sqlite3.connect('server.db')
-sql = db.cursor()
-sql.execute("""SELECT * FROM figures""")
-for var in sql.fetchall():
-    for i in range(len(var[1])):
-        FIGURES[var[0]] = [list(var[1].split())]
-        FIGURES[var[0]].append(rotate_figure(FIGURES[var[0]][0]))
-        FIGURES[var[0]].append(rotate_figure(FIGURES[var[0]][1]))
-        FIGURES[var[0]].append(rotate_figure(FIGURES[var[0]][2]))
-sql.close()
+try:
+    db = sqlite3.connect('server.db')
+    sql = db.cursor()
+    sql.execute("""SELECT * FROM figures""")
+    for var in sql.fetchall():
+        for i in range(len(var[1])):
+            FIGURES[var[0]] = [list(var[1].split())]
+            FIGURES[var[0]].append(rotate_figure(FIGURES[var[0]][0]))
+            FIGURES[var[0]].append(rotate_figure(FIGURES[var[0]][1]))
+            FIGURES[var[0]].append(rotate_figure(FIGURES[var[0]][2]))
+    sql.close()
+except sqlite3.OperationalError as e:
+    print(e)
 
 
 def pause_screen():
